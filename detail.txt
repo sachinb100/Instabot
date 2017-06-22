@@ -1,0 +1,3 @@
+This is a  terminal bot app using python that allows you to use the various features of the Instagram API.
+For using this bot some additional library have to be installed.
+The libraries are:requests,urilib amd textblob.
