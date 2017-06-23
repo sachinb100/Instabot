@@ -201,6 +201,16 @@ def delete_negative_comment(insta_username):
             print "There are no existing comments on a post!"
     else:
         print "Status code other than 200 received"
+
+#function for getting recent media liked by user
+def get_recent_like():
+        request_url = (BASE_URL + 'users/self/media/liked?access_token=%s') % (ACCESS_TOKEN)
+        recent_like_post = requests.get(request_url).json()
+        if recent_like_post['meta']['code'] == 200:
+            print "User like the recent media of:%s" % (recent_like_post['data'][0]['user']['username'])
+            print "Media is:%s" % (recent_like_post['data'][0]['images']['thumbnail']['url'])
+        else:
+            print "Status code other than 200 recieved."
 #function for showing menu options to user
 def start_bot():
     while True:
@@ -216,7 +226,8 @@ def start_bot():
         print "g.Get a list of comments on the recent post of a user\n"
         print "h.Make a comment on the recent post of a user\n"
         print "i.Delete negative comments from the recent post of a user\n"
-        print "j.Exit"
+        print "j.Get the recent media liked by user\n"
+        print "k.Exit"
 
         choice = raw_input("Enter you choice: ")
         if choice == "a":
@@ -245,9 +256,14 @@ def start_bot():
            insta_username = raw_input("Enter the username of the user: ")
            delete_negative_comment(insta_username)
         elif choice == "j":
+            get_recent_like()
+
+        elif choice == "k":
             exit()
         else:
             print "wrong choice"
+
 start_bot()
+
 
 
