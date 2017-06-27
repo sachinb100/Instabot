@@ -211,6 +211,29 @@ def get_recent_like():
             print "Media is:%s" % (recent_like_post['data'][0]['images']['thumbnail']['url'])
         else:
             print "Status code other than 200 recieved."
+
+#function for getting minimum numer of likes
+def get_creative_post():
+            insta_username = raw_input("enter name of user")
+            user_id = get_user_id(insta_username)
+            request_url = (BASE_URL + "users/%s/media/recent?access_token=%s") % (user_id, ACCESS_TOKEN)
+            print"Requesting media for%s" % (request_url)
+            post = requests.get(request_url).json()
+            l = []
+            # download the most recent post and return it's post ID
+            if post['meta']['code'] == 200:
+                for x in range(0, len(post['data'])):
+                    l.append(post['data'][x]['likes']['count'])
+
+                print "Minimum number of likes is:%s" % (min(l))
+                minimum_likes = min(l)
+                for x in range(0, len(l)):
+                    if l[x] == minimum_likes:
+                        print"Post with minimum number of likes is:%s" % (
+                        post['data'][x]['images']['standard_resolution']['url'])
+            else:
+                print"Status code other than 200 recieved"
+            return None
 #function for showing menu options to user
 def start_bot():
     while True:
@@ -227,7 +250,8 @@ def start_bot():
         print "h.Make a comment on the recent post of a user\n"
         print "i.Delete negative comments from the recent post of a user\n"
         print "j.Get the recent media liked by user\n"
-        print "k.Exit"
+        print "k.Get the post with minimum number of likes\n"
+        print "l.Exit"
 
         choice = raw_input("Enter you choice: ")
         if choice == "a":
@@ -257,13 +281,12 @@ def start_bot():
            delete_negative_comment(insta_username)
         elif choice == "j":
             get_recent_like()
-
-        elif choice == "k":
+        elif choice=="k":
+            get_creative_post()
+        elif choice == "l":
             exit()
         else:
             print "wrong choice"
 
 start_bot()
-
-
 
