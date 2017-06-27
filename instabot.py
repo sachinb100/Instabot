@@ -212,7 +212,7 @@ def get_recent_like():
         else:
             print "Status code other than 200 recieved."
 
-#function for getting minimum numer of likes
+#function for getting post with minimum number of likes
 def get_creative_post():
             insta_username = raw_input("enter name of user")
             user_id = get_user_id(insta_username)
@@ -234,6 +234,40 @@ def get_creative_post():
             else:
                 print"Status code other than 200 recieved"
             return None
+
+#function for making targeted comments on post for
+def target_comment():
+    insta_username = raw_input("enter name of user")
+    tag_name = raw_input("Enter the tag name:")
+    user_id = get_user_id(insta_username)
+    request_url = (BASE_URL + "users/%s/media/recent?access_token=%s") % (user_id, ACCESS_TOKEN)
+    print"Requesting media for%s" % (request_url)
+    tag_info = requests.get(request_url).json()
+    count=0
+
+    if tag_info['meta']['code']==200:
+
+            for x in range(0,len(tag_info['data'])):
+                caption= tag_info['data'][x]['caption']
+                if caption is not None:
+                    tag=caption['text']
+                    if tag_name in tag:
+                        count=1
+                        print "Tag found"
+                        comment_text = raw_input("Your Comment:")
+                        payload = {"access_token": ACCESS_TOKEN, "text": comment_text}
+                        request_url = (BASE_URL + "media/%s/comments") % (tag_info['data'][x]['id'])
+                        print "Making comment on post:%s" % (request_url)
+                        make_comment = requests.post(request_url, payload).json()
+                        if make_comment['meta']['code'] == 200:
+                            print "Successfully added a comment"
+                        else:
+                            print"Unable to add comment.Try again"
+
+            if count==0:
+                print "Tag not found"
+    else:
+        print "Status code other than 200 recieved"
 #function for showing menu options to user
 def start_bot():
     while True:
@@ -251,7 +285,8 @@ def start_bot():
         print "i.Delete negative comments from the recent post of a user\n"
         print "j.Get the recent media liked by user\n"
         print "k.Get the post with minimum number of likes\n"
-        print "l.Exit"
+        print "l.Make targeted commented on posts for the sake of marketing your product or service \n"
+        print "m.Exit"
 
         choice = raw_input("Enter you choice: ")
         if choice == "a":
@@ -284,6 +319,8 @@ def start_bot():
         elif choice=="k":
             get_creative_post()
         elif choice == "l":
+            target_comment()
+        elif choice == "m":
             exit()
         else:
             print "wrong choice"
